@@ -60,3 +60,21 @@ jobs:
             echo "App not healthy"
             exit 1
         fi
+    - name: Get the version
+      id: vars
+      run: echo ::set-output name=tag::$(echo ${GITHUB_SHA:10})
+    
+    - name: Docker login
+      run: docker login -u="loginmayankvonage" -p="abcd@1983" docker.io
+    
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag loginmayankvonage/mayanktest1:${{steps.vars.outputs.tag}}
+   
+    - name: Publish dockerimage to docker hub
+      run: docker push loginmayankvonage/mayanktest1:${{steps.vars.outputs.tag}}
+    
+    - name: Build Docker image with latest tag
+      run: docker build . --file Dockerfile --tag loginmayankvonage/mayanktest1:latest
+    
+    - name: Publish dockerimage to docker hub
+      run: docker push loginmayankvonage/mayanktest1:latest
